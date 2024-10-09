@@ -31,7 +31,7 @@ def calc_trend(x, y, do_plot=True, bins=100, window_size=20, **kwargs):
     ).T
 
     if do_plot:
-        mean_p_std_err = (mean_err ** 2 + std_err ** 2) ** 0.5
+        mean_p_std_err = (mean_err**2 + std_err**2) ** 0.5
         plt.fill_between(bin_centers, mean - mean_err, mean + mean_err, **kwargs)
         kwargs['alpha'] *= 0.5
         kwargs = {k: v for k, v in kwargs.items() if k != 'label'}
@@ -43,7 +43,18 @@ def calc_trend(x, y, do_plot=True, bins=100, window_size=20, **kwargs):
     return (mean, std), (mean_err, std_err)
 
 
-def make_trend_plot(feature_real, real, feature_gen, gen, name, calc_chi2=False, figsize=(8, 8), pdffile=None):
+def make_trend_plot(
+    feature_real,
+    real,
+    feature_gen,
+    gen,
+    name,
+    calc_chi2=False,
+    figsize=(8, 8),
+    pdffile=None,
+    label_real='real',
+    label_gen='generated',
+):
     feature_real = feature_real.squeeze()
     feature_gen = feature_gen.squeeze()
     real = real.squeeze()
@@ -52,8 +63,8 @@ def make_trend_plot(feature_real, real, feature_gen, gen, name, calc_chi2=False,
     bins = np.linspace(min(feature_real.min(), feature_gen.min()), max(feature_real.max(), feature_gen.max()), 100)
 
     fig = plt.figure(figsize=figsize)
-    calc_trend(feature_real, real, bins=bins, label='real', color='blue')
-    calc_trend(feature_gen, gen, bins=bins, label='generated', color='red')
+    calc_trend(feature_real, real, bins=bins, label=label_real, color='blue')
+    calc_trend(feature_gen, gen, bins=bins, label=label_gen, color='red')
     plt.legend()
     plt.title(name)
 
@@ -78,11 +89,11 @@ def make_trend_plot(feature_real, real, feature_gen, gen, name, calc_chi2=False,
 
         gen_upper = gen_mean + gen_std
         gen_lower = gen_mean - gen_std
-        gen_err2 = gen_mean_err ** 2 + gen_std_err ** 2
+        gen_err2 = gen_mean_err**2 + gen_std_err**2
 
         real_upper = real_mean + real_std
         real_lower = real_mean - real_std
-        real_err2 = real_mean_err ** 2 + real_std_err ** 2
+        real_err2 = real_mean_err**2 + real_std_err**2
 
         chi2 = ((gen_upper - real_upper) ** 2 / (gen_err2 + real_err2)).sum() + (
             (gen_lower - real_lower) ** 2 / (gen_err2 + real_err2)
